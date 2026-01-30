@@ -11,9 +11,9 @@ Issues found:
 Open questions:
 * ~~Is there pagination? It would be nice to split the request in N batches.~~
 * ~~Is it possible to specify return columns?~~
-* How can we filter null values?
+* How can we filter out null values?
 * On the website: search field in /filter would benefit from an example.
-* On the website: it is not clear what the "Supported Operators" are and how to use them, except maybe
+* On the website: Supported Operators would benefit from a few examples
 
 Lessons learned:
 * headers are not needed when calling the API via requests.
@@ -23,5 +23,4 @@ Lessons learned:
   * `"limit":100, "offset":100`
   * and so on
 * By default, 100 instances will be returned when filtering. This can be tweaked with `limit` parameter, but it can only vary between 1 and 1000.
-* With filters, one can specify return columns.
-*
+* With filters, one can specify return columns and save bandwidth and compute resources.
