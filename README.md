@@ -48,5 +48,10 @@ I don't like this, it's packaging metadata with data, and if at all possible, th
 Interestingly enough, parquet files can be read with pandas without dealing with the preamble.
 
 
+# Migrating to pytest
 
+Requirements: pytest and polars
 
+Invoking: `parlaCAPI$ pytest tests -vv`
+
+The set of tests is not yet complete and will be expanded on.
