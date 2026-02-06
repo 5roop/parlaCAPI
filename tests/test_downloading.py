@@ -30,8 +30,15 @@ def test_downloading_file(format):
     assert p.exists()
 
     handler = {
-        "csv": lambda s: pl.read_csv(s, skip_rows=7),
-        "tsv": lambda s: pl.read_csv(s, separator="\t", skip_rows=7),
+        "csv": lambda s: pl.read_csv(
+            s,
+            #  skip_rows=7
+        ),
+        "tsv": lambda s: pl.read_csv(
+            s,
+            separator="\t",
+            #  skip_rows=7
+        ),
         "parquet": pl.read_parquet,
     }
     if handler.get(format, False):
