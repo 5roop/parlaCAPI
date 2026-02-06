@@ -1,5 +1,5 @@
-downloaded_data.*
-
+downloaded_data*
+my_downloaded_file*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
