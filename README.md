@@ -1,5 +1,18 @@
 # Testing ParlaCAPI
 
+## Status as of 2026-02-06T13:17:28
+
+All of the issues identified have been resolved.
+
+Further questions:
+1. Do we want to bother with /preview endpoint?
+
+Bugs found:
+1. `partyfacts_id` shows up as `"1011.0"`. This can be an int.
+2. If filtering with an illogical query, the error message could be improved.
+
+
+
 ## Issues found:
 * Column names: `parlmint_text_id` and `parlmint_id`. Should be `parlamint_text_id` and `parlamint_id`.
 * The following columns seem to always be empty (tested on a 30k sample):
