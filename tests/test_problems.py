@@ -54,3 +54,43 @@ def test_illogical_filter_query():
         response.content
         == b'{"detail":[{"type":"extra_forbidden","loc":["body","operator"],"msg":"Extra inputs are not permitted","input":"AND"},{"type":"extra_forbidden","loc":["body","filters"],"msg":"Extra inputs are not permitted","input":[{"column":"parliament","operator":"=","value":"SI"},{"column":"parliament","operator":"!=","value":"SI"}]}]}'
     )
+
+
+def test_filter_with_empty_IN_in_complex_filter_query():
+    filter = {
+        "filter": {
+            "operator": "AND",
+            "filters": [
+                {"column": "parliament", "value": "SI", "operator": "="},
+                {"column": "speaker_party", "value": [], "operator": "IN"},
+            ],
+        },
+        "limit": 1,
+        "offset": 10,
+    }
+
+    response = requests.post(
+        url + "filter",
+        json=filter,
+    )
+    assert '{"detail":{"code":"INVALID_FILTER"' in response.content.decode("utf8")
+    assert '"IN operator requires at least one value"' in response.content.decode(
+        "utf8"
+    )
+
+
+def test_filter_with_empty_IN_in_simple_filter_query():
+    filter = {
+        "filter": {"column": "speaker_party", "value": [], "operator": "IN"},
+        "limit": 1,
+        "offset": 10,
+    }
+
+    response = requests.post(
+        url + "filter",
+        json=filter,
+    )
+    assert '{"detail":{"code":"INVALID_FILTER"' in response.content.decode("utf8")
+    assert '"IN operator requires at least one value"' in response.content.decode(
+        "utf8"
+    )
