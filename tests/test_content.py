@@ -1,5 +1,18 @@
 import pytest
-import polars as pl
+
+
+def get_variables():
+    import requests
+
+    url = "https://parlacap.ipipan.waw.pl/"
+    response = requests.get(url + "variables")
+    if not response.status_code == 200:
+        raise Exception(
+            f"Got weird response code: {response.status_code}, content: {response.content}"
+        )
+
+    payload = response.json()
+    return [i["name"] for i in payload]
 
 
 @pytest.fixture
@@ -13,7 +26,7 @@ def get_sample():
         raise Exception(f"Got weird response code: {response.status_code}")
 
     payload = response.json()
-    return pl.DataFrame(payload)
+    return payload
 
 
 ps = [
@@ -49,56 +62,17 @@ ps = [
 
 
 def test_valid_parliaments(get_sample):
-    df = get_sample
-    unique_parliaments = df["parliament"].unique().sort().to_list()
+    unique_parliaments = set([i["parliament"] for i in get_sample])
     # Is there a parliament that is not in ps?
     for u in unique_parliaments:
         assert u in ps
 
 
-def test_if_all_nulls_in_cap_category(get_sample):
-    df = get_sample
-    non_nulls = df["cap_category"].drop_nulls().shape[0]
-    assert non_nulls > 0
+@pytest.mark.parametrize(
+    "attr",
+    get_variables(),
+)
+def test_if_all_nulls_in_attr_cap_category(get_sample, attr: str):
 
-
-def test_if_all_nulls_in_cap_prob(get_sample):
-    df = get_sample
-    non_nulls = df["cap_prob"].drop_nulls().shape[0]
-    assert non_nulls > 0
-
-
-def test_if_all_nulls_in_parlamint_text_id(get_sample):
-    df = get_sample
-    non_nulls = df["parlamint_text_id"].drop_nulls().shape[0]
-    assert non_nulls > 0
-
-
-def test_if_all_nulls_in_parlamint_id(get_sample):
-    df = get_sample
-    non_nulls = df["parlamint_id"].drop_nulls().shape[0]
-    assert non_nulls > 0
-
-
-def test_if_all_nulls_in_speaker_id(get_sample):
-    df = get_sample
-    non_nulls = df["speaker_id"].drop_nulls().shape[0]
-    assert non_nulls > 0
-
-
-def test_if_all_nulls_in_speaker_name(get_sample):
-    df = get_sample
-    non_nulls = df["speaker_name"].drop_nulls().shape[0]
-    assert non_nulls > 0
-
-
-def test_if_all_nulls_in_text(get_sample):
-    df = get_sample
-    non_nulls = df["text"].drop_nulls().shape[0]
-    assert non_nulls > 0
-
-
-def test_if_all_nulls_in_text_en(get_sample):
-    df = get_sample
-    non_nulls = df["text_en"].drop_nulls().shape[0]
-    assert non_nulls > 0
+    non_nulls = [i for i in get_sample if i[attr] is not None]
+    assert len(non_nulls) > 0
