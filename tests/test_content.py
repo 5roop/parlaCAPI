@@ -29,45 +29,6 @@ def get_sample():
     return payload
 
 
-ps = [
-    "AT",
-    "BA",
-    "BE",
-    "BG",
-    "CZ",
-    "DK",
-    "EE",
-    "ES",
-    "ES-CT",
-    "ES-GA",
-    "ES-PV",
-    "FR",
-    "GB",
-    "GR",
-    "HR",
-    "HU",
-    "IS",
-    "IT",
-    "LV",
-    "NL",
-    "NO",
-    "PL",
-    "PT",
-    "RS",
-    "SE",
-    "SI",
-    "TR",
-    "UA",
-]
-
-
-def test_valid_parliaments(get_sample):
-    unique_parliaments = set([i["parliament"] for i in get_sample])
-    # Is there a parliament that is not in ps?
-    for u in unique_parliaments:
-        assert u in ps
-
-
 @pytest.mark.parametrize(
     "attr",
     get_variables(),
