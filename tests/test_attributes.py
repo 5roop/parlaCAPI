@@ -4,23 +4,36 @@ import requests
 import pytest
 
 
-def test_that_API_returns_anything():
-    response = requests.get(url + "sample?size=1")
-    if not response.status_code == 200:
-        raise Exception(f"Got weird response code: {response.status_code}")
-
-    payload = response.json()[0]
-    assert bool(payload)
-
-
 @pytest.fixture
 def sample():
-    response = requests.get(url + "sample?size=1")
+    response = requests.get(url + "sample?size=100")
     if not response.status_code == 200:
         raise Exception(f"Got weird response code: {response.status_code}")
 
-    payload = response.json()[0]
+    payload = response.json()
     return payload
+
+
+def test_that_API_returns_anything(sample):
+    assert bool(sample)
+
+
+def test_variables_dtypes(sample):
+    response = requests.get(url + "variables")
+    if not response.status_code == 200:
+        raise Exception(f"Got weird response code: {response.status_code}")
+    payload = response.json()
+    prescribed_dtypes = {i["name"]: i["type"] for i in payload}
+
+    for name, dtype in prescribed_dtypes.items():
+        pythontype = {"INTEGER": int, "REAL": float, "TEXT": str}.get(dtype)
+        for i in sample:
+            if i[name] is None:
+                continue
+            assert isinstance(i[name], pythontype)
+
+
+# test_variables_dtypes(sample())
 
 
 def test_variables():
