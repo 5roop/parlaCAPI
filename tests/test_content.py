@@ -15,7 +15,7 @@ def get_variables():
     return [i["name"] for i in payload]
 
 
-@pytest.fixture
+@pytest.fixture(scope="package")
 def get_sample():
     url = "https://parlacap.ipipan.waw.pl/"
 

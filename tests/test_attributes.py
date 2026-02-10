@@ -4,7 +4,7 @@ import requests
 import pytest
 
 
-@pytest.fixture
+@pytest.fixture(scope="package")
 def sample():
     response = requests.get(url + "sample?size=100")
     if not response.status_code == 200:
@@ -14,7 +14,7 @@ def sample():
     return payload
 
 
-@pytest.fixture
+@pytest.fixture(scope="package")
 def variables():
     response = requests.get(url + "variables")
     if not response.status_code == 200:
