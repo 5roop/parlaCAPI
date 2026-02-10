@@ -14,26 +14,29 @@ def sample():
     return payload
 
 
-def test_that_API_returns_anything(sample):
-    assert bool(sample)
-
-
-def test_variables_dtypes(sample):
+@pytest.fixture
+def variables():
     response = requests.get(url + "variables")
     if not response.status_code == 200:
         raise Exception(f"Got weird response code: {response.status_code}")
     payload = response.json()
-    prescribed_dtypes = {i["name"]: i["type"] for i in payload}
+    return payload
 
-    for name, dtype in prescribed_dtypes.items():
+
+def test_that_API_returns_anything(sample):
+    assert bool(sample)
+
+
+def test_variables_dtypes(sample, variables):
+
+    declared_dtypes = {i["name"]: i["type"] for i in variables}
+
+    for name, dtype in declared_dtypes.items():
         pythontype = {"INTEGER": int, "REAL": float, "TEXT": str}.get(dtype)
         for i in sample:
             if i[name] is None:
                 continue
             assert isinstance(i[name], pythontype)
-
-
-# test_variables_dtypes(sample())
 
 
 def test_variables():
