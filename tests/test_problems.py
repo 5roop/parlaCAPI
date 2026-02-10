@@ -94,3 +94,28 @@ def test_filter_with_empty_IN_in_simple_filter_query():
     assert '"IN operator requires at least one value"' in response.content.decode(
         "utf8"
     )
+
+
+def test_genders():
+    filter = {
+        "filter": {
+            "operator": "NOT",
+            "filters": [
+                {"column": "speaker_gender", "operator": "IN", "value": ["M", "F"]}
+            ],
+        },
+        "limit": 200,
+        "columns": ["speaker_gender"],
+    }
+
+    response = requests.post(
+        url + "filter",
+        json=filter,
+    )
+    if not response.status_code == 200:
+        raise Exception(
+            f"Got weird response code: {response.status_code}, content: {response.content}"
+        )
+    payload = response.json()
+    genders = set([i["speaker_gender"] for i in payload])
+    assert genders == {None}
