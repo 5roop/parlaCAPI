@@ -96,7 +96,7 @@ def test_filter_with_empty_IN_in_simple_filter_query():
     )
 
 
-def test_genders():
+def test_genders_for_non_MF_values():
     filter = {
         "filter": {
             "operator": "NOT",
@@ -119,3 +119,22 @@ def test_genders():
     payload = response.json()
     genders = set([i["speaker_gender"] for i in payload])
     assert genders == {None}
+
+
+def test_genders_for_null_values():
+    filter = {
+        "filter": {"column": "speaker_gender", "value": None, "operator": "="},
+        "limit": 10,
+        "columns": ["speaker_gender"],
+    }
+
+    response = requests.post(
+        url + "filter",
+        json=filter,
+    )
+    if not response.status_code == 200:
+        raise Exception(
+            f"Got weird response code: {response.status_code}, content: {response.content}"
+        )
+    payload = response.json()
+    assert len(payload) == 10
