@@ -1,11 +1,13 @@
+import requests
 import pytest
-
+from dotenv import load_dotenv
+import os
+load_dotenv(dotenv_path="my_secrets.env")
+headers={"X-API-Key": os.getenv("parlacapi_key")}
+url = "https://parlacap.ipipan.waw.pl/api/v1/"
 
 def get_variables():
-    import requests
-
-    url = "https://parlacap.ipipan.waw.pl/"
-    response = requests.get(url + "variables")
+    response = requests.get(url + "variables", headers = headers)
     if not response.status_code == 200:
         raise Exception(
             f"Got weird response code: {response.status_code}, content: {response.content}"
@@ -17,11 +19,7 @@ def get_variables():
 
 @pytest.fixture(scope="package")
 def get_sample():
-    url = "https://parlacap.ipipan.waw.pl/"
-
-    import requests
-
-    response = requests.get(url + "sample?size=500")
+    response = requests.get(url + "sample?size=500", headers = headers)
     if not response.status_code == 200:
         raise Exception(f"Got weird response code: {response.status_code}")
 

@@ -30,9 +30,14 @@ ps = [
     "TR",
     "UA",
 ]
-url = "https://parlacap.ipipan.waw.pl/"
+url = "https://parlacap.ipipan.waw.pl/api/v1/"
 
 import requests
+from dotenv import load_dotenv
+import os
+
+load_dotenv(dotenv_path="my_secrets.env")
+headers = {"X-API-Key": os.getenv("parlacapi_key")}
 
 
 @pytest.mark.parametrize("p", ps)
@@ -43,7 +48,7 @@ def test_filter_endpoint_on_a_parlament(p):
         "offset": 0,
     }
 
-    response = requests.post(url + "filter", json=filter_data)
+    response = requests.post(url + "filter", json=filter_data, headers=headers)
     if not response.status_code == 200:
         raise Exception(f"Got weird response code: {response.content}")
 
@@ -74,10 +79,7 @@ def test_filter_endpoint_with_a_complex_query():
         "offset": 0,
     }
 
-    response = requests.post(
-        url + "filter",
-        json=filter,
-    )
+    response = requests.post(url + "filter", json=filter, headers=headers)
     if not response.status_code == 200:
         raise Exception(
             f"Got weird response code: {response.status_code}, response text: {response.text}"
@@ -108,10 +110,7 @@ def test_filtering_modes():
         "offset": 0,
     }
 
-    response = requests.post(
-        url + "filter",
-        json=filter,
-    )
+    response = requests.post(url + "filter", json=filter, headers=headers)
     if not response.status_code == 200:
         raise Exception(
             f"Got weird response code: {response.status_code}, response text: {response.text}"
@@ -134,10 +133,7 @@ def test_filtering_modes():
         "order_by": ["word_count", "id"],
         "limit": 1,
     }
-    response = requests.post(
-        url + "filter",
-        json=filter,
-    )
+    response = requests.post(url + "filter", json=filter, headers=headers)
     if not response.status_code == 200:
         raise Exception(
             f"Got weird response code: {response.status_code}, response text: {response.text}"
@@ -164,10 +160,7 @@ def test_filter_text_starts_with():
         "offset": 0,
     }
 
-    response = requests.post(
-        url + "filter",
-        json=filter,
-    )
+    response = requests.post(url + "filter", json=filter, headers=headers)
     if not response.status_code == 200:
         raise Exception(
             f"Got weird response code: {response.status_code}, response text: {response.text}"
@@ -194,10 +187,7 @@ def test_filter_text_contains():
         "offset": 0,
     }
 
-    response = requests.post(
-        url + "filter",
-        json=filter,
-    )
+    response = requests.post(url + "filter", json=filter, headers=headers)
     if not response.status_code == 200:
         raise Exception(
             f"Got weird response code: {response.status_code}, response text: {response.text}"
@@ -215,10 +205,7 @@ def test_filter_for_null_values():
         "offset": 10,
     }
 
-    response = requests.post(
-        url + "filter",
-        json=filter,
-    )
+    response = requests.post(url + "filter", json=filter, headers=headers)
     if not response.status_code == 200:
         raise Exception(
             f"Got weird response code: {response.status_code}, response text: {response.text}"
@@ -226,4 +213,3 @@ def test_filter_for_null_values():
 
     payload = response.json()
     assert len(payload) == 1
-

@@ -1,7 +1,12 @@
-import pytest
-import requests
+url = "https://parlacap.ipipan.waw.pl/api/v1/"
 
-url = "https://parlacap.ipipan.waw.pl/"
+import requests
+import pytest
+from dotenv import load_dotenv
+import os
+
+load_dotenv(dotenv_path="my_secrets.env")
+headers = {"X-API-Key": os.getenv("parlacapi_key")}
 
 
 def test_no_result_query():
@@ -9,10 +14,7 @@ def test_no_result_query():
         "filter": {"column": "speaker_name", "operator": "=", "value": "Miška, Miki"},
     }
 
-    response = requests.post(
-        url + "filter",
-        json=filter,
-    )
+    response = requests.post(url + "filter", json=filter, headers=headers)
     assert response.status_code == 404
     assert (
         response.content
@@ -25,10 +27,7 @@ def test_malformed_filter_query():
         "filter": {"column": "speaker_name", "moperator": "=", "value": "Miška, Miki"},
     }
 
-    response = requests.post(
-        url + "filter",
-        json=filter,
-    )
+    response = requests.post(url + "filter", json=filter, headers=headers)
     assert response.status_code == 400
     assert (
         response.content
@@ -45,10 +44,7 @@ def test_illogical_filter_query():
         ],
     }
 
-    response = requests.post(
-        url + "filter",
-        json=filter,
-    )
+    response = requests.post(url + "filter", json=filter, headers=headers)
     assert response.status_code == 422
     assert (
         response.content
@@ -69,10 +65,7 @@ def test_filter_with_empty_IN_in_complex_filter_query():
         "offset": 10,
     }
 
-    response = requests.post(
-        url + "filter",
-        json=filter,
-    )
+    response = requests.post(url + "filter", json=filter, headers=headers)
     assert '{"detail":{"code":"INVALID_FILTER"' in response.content.decode("utf8")
     assert '"IN operator requires at least one value"' in response.content.decode(
         "utf8"
@@ -86,10 +79,7 @@ def test_filter_with_empty_IN_in_simple_filter_query():
         "offset": 10,
     }
 
-    response = requests.post(
-        url + "filter",
-        json=filter,
-    )
+    response = requests.post(url + "filter", json=filter, headers=headers)
     assert '{"detail":{"code":"INVALID_FILTER"' in response.content.decode("utf8")
     assert '"IN operator requires at least one value"' in response.content.decode(
         "utf8"
@@ -108,10 +98,7 @@ def test_genders_for_non_MF_values():
         "columns": ["speaker_gender"],
     }
 
-    response = requests.post(
-        url + "filter",
-        json=filter,
-    )
+    response = requests.post(url + "filter", json=filter, headers=headers)
     if not response.status_code == 200:
         raise Exception(
             f"Got weird response code: {response.status_code}, content: {response.content}"
@@ -128,10 +115,7 @@ def test_genders_for_null_values():
         "columns": ["speaker_gender"],
     }
 
-    response = requests.post(
-        url + "filter",
-        json=filter,
-    )
+    response = requests.post(url + "filter", json=filter, headers=headers)
     if not response.status_code == 200:
         raise Exception(
             f"Got weird response code: {response.status_code}, content: {response.content}"

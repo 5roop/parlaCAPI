@@ -1,11 +1,17 @@
 formats = ["xlsx", "tsv", "csv", "jsonl", "parquet", "rds"]
 
 from pathlib import Path
-import requests
-import pytest
 import polars as pl
 
-url = "https://parlacap.ipipan.waw.pl/"
+url = "https://parlacap.ipipan.waw.pl/api/v1/"
+
+import requests
+import pytest
+from dotenv import load_dotenv
+import os
+
+load_dotenv(dotenv_path="my_secrets.env")
+headers = {"X-API-Key": os.getenv("parlacapi_key")}
 
 
 @pytest.mark.parametrize("metadata", [True, False])
@@ -21,6 +27,7 @@ def test_downloading_file(format: str, metadata: bool):
     response = requests.post(
         url + f"download?format={format}&include_metadata={str(metadata).lower()}",
         json=filter,
+        headers=headers,
     )
     if not response.status_code == 200:
         raise Exception(
