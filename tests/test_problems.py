@@ -37,18 +37,20 @@ def test_malformed_filter_query():
 
 def test_illogical_filter_query():
     filter = {
-        "operator": "AND",
-        "filters": [
-            {"column": "parliament", "operator": "=", "value": "SI"},
-            {"column": "parliament", "operator": "!=", "value": "SI"},
-        ],
+        "filter": {
+            "operator": "AND",
+            "filters": [
+                {"column": "parliament", "operator": "=", "value": "SI"},
+                {"column": "parliament", "operator": "!=", "value": "SI"},
+            ],
+        }
     }
 
     response = requests.post(url + "filter", json=filter, headers=headers)
-    assert response.status_code == 422
+    assert response.status_code == 400
     assert (
         response.content
-        == b'{"detail":[{"type":"extra_forbidden","loc":["body","operator"],"msg":"Extra inputs are not permitted","input":"AND"},{"type":"extra_forbidden","loc":["body","filters"],"msg":"Extra inputs are not permitted","input":[{"column":"parliament","operator":"=","value":"SI"},{"column":"parliament","operator":"!=","value":"SI"}]}]}'
+        == b'{"detail":{"code":"INVALID_FILTER","message":"Contradictory filter for column \'parliament\'","details":{"column":"parliament"}}}'
     )
 
 
