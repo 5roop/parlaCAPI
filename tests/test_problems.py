@@ -105,7 +105,7 @@ def test_genders_for_non_MF_values():
         raise Exception(
             f"Got weird response code: {response.status_code}, content: {response.content}"
         )
-    payload = response.json()
+    payload = response.json()["rows"]
     genders = set([i["speaker_gender"] for i in payload])
     assert genders == {None}
 
@@ -122,5 +122,5 @@ def test_genders_for_null_values():
         raise Exception(
             f"Got weird response code: {response.status_code}, content: {response.content}"
         )
-    payload = response.json()
+    payload = response.json()["rows"]
     assert len(payload) == 10

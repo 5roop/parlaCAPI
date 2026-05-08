@@ -52,7 +52,7 @@ def test_filter_endpoint_on_a_parlament(p):
     if not response.status_code == 200:
         raise Exception(f"Got weird response code: {response.content}")
 
-    payload = response.json()
+    payload = response.json()["rows"]
     assert all([i["parliament"] == p for i in payload])
 
 
@@ -85,7 +85,7 @@ def test_filter_endpoint_with_a_complex_query():
             f"Got weird response code: {response.status_code}, response text: {response.text}"
         )
 
-    payload = response.json()
+    payload = response.json()["rows"]
     assert payload[0]["text"].startswith(
         "Drodzy Rodacy! Panie Marszałku! Szanowni Państwo Marszałkowie poprzedniej i wcześniejszych kadencji Sejmu! Pani Premier! "
     )
@@ -116,7 +116,7 @@ def test_filtering_modes():
             f"Got weird response code: {response.status_code}, response text: {response.text}"
         )
 
-    payload = response.json()[0]
+    payload = response.json()["rows"][0]
     assert payload["text"] == "Azbestni zakon."
     assert payload["id"] == 6515206
 
@@ -139,7 +139,7 @@ def test_filtering_modes():
             f"Got weird response code: {response.status_code}, response text: {response.text}"
         )
 
-    payload = response.json()[0]
+    payload = response.json()["rows"][0]
     assert payload["text"] == "Azbestni zakon."
     assert payload["id"] == 6515206
 
@@ -166,7 +166,7 @@ def test_filter_text_starts_with():
             f"Got weird response code: {response.status_code}, response text: {response.text}"
         )
 
-    payload = response.json()[0]
+    payload = response.json()["rows"][0]
     assert payload["text"] == "Azbestni zakon."
     assert payload["id"] == 6515206
 
@@ -193,7 +193,7 @@ def test_filter_text_contains():
             f"Got weird response code: {response.status_code}, response text: {response.text}"
         )
 
-    payload = response.json()[0]
+    payload = response.json()["rows"][0]
     assert payload["text"] == "Azbestni zakon."
     assert payload["id"] == 6515206
 
@@ -211,5 +211,5 @@ def test_filter_for_null_values():
             f"Got weird response code: {response.status_code}, response text: {response.text}"
         )
 
-    payload = response.json()
+    payload = response.json()["rows"]
     assert len(payload) == 1
